@@ -112,7 +112,7 @@ public class BookService {
     // listado con paginación simple
     @Transactional
     public Page<BookDTO> list(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("isbn").descending());
         return bookRepo.findAll(pageable).map(mapper::toDto);
     }
 }

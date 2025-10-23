@@ -25,7 +25,7 @@ public class BookController {
                 .body(new ApiResponse<>(true, "Libro creado correctamente", saved));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{isbn}")
     public ResponseEntity<ApiResponse<BookDTO>> update(@PathVariable String isbn, @Valid @RequestBody BookDTO dto) {
         BookDTO updated = service.update(isbn, dto);
         return ResponseEntity.ok(new ApiResponse<>(true, "Libro actualizado correctamente", updated));
@@ -37,13 +37,13 @@ public class BookController {
         return ResponseEntity.ok(new ApiResponse<>(true, "Libro eliminado correctamente", null));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{isbn}")
     public ResponseEntity<ApiResponse<BookDTO>> findById(@PathVariable String isbn) {
         BookDTO dto = service.findById(isbn);
         return ResponseEntity.ok(new ApiResponse<>(true, "Libro encontrado correctamente", dto));
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<ApiResponse<Page<BookDTO>>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

@@ -23,5 +23,6 @@ server:
 # Opcional: configuración de JWT
 security:
   jwt:
-    secret: my-password-secret-kvrn1001$-239u54DanielNoriegaAnalisis
+#    secret:
+    secret: "esta_es_una_clave_larga_de_al_menos_32_bytes_123456"
     expiration-minutes: 60

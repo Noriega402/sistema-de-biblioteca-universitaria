@@ -54,7 +54,7 @@ public class AuthService {
                 .build();
         usuarios.save(user);
 
-        var token = jwt.generateToken(user.getNick(), Map.of("rol", rol.getDescripcion()));
+        var token = jwt.generateToken(user.getNick(), Map.of("roles", rol.getDescripcion()));
         return new AuthResponse(token, rol.getDescripcion(), user.getNick());
     }
 
@@ -67,7 +67,7 @@ public class AuthService {
             throw new IllegalArgumentException("Credenciales inválidas");
         }
 
-        var token = jwt.generateToken(user.getNick(), Map.of("rol", user.getRol().getDescripcion()));
+        var token = jwt.generateToken(user.getNick(), Map.of("roles", user.getRol().getDescripcion()));
         return new AuthResponse(token, user.getRol().getDescripcion(), user.getNick());
     }
 }

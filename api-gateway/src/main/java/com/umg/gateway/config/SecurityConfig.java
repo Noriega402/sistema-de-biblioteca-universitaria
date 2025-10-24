@@ -58,8 +58,7 @@ public class SecurityConfig {
 
             var adapter = new ReactiveJwtAuthenticationConverterAdapter(delegate);
             jwt.jwtAuthenticationConverter(adapter);
-        }))
-                .build();
+        })).build();
     }
 
     @Bean

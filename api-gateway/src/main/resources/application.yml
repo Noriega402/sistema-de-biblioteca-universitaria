@@ -21,7 +21,7 @@ spring:
             - id: catalog-service-books
               uri: http://localhost:8082
               predicates:
-                - Path=/api/v1/libros/**
+                - Path=Path=/api/v1/libros, /api/v1/libros/**
               filters:
                 #- StripPrefix=2
                 #- SetPath=/books
@@ -29,7 +29,7 @@ spring:
             - id: catalog-service-authors
               uri: http://localhost:8082
               predicates:
-                - Path=/api/v1/authors/**
+                - Path=/api/v1/authors, /api/v1/authors/**
               filters:
                
 logging:

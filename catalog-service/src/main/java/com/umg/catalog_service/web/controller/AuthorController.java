@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthorController {
   private final AuthorService service;
 
-  @GetMapping
+  @GetMapping("")
   public PageResponse<AuthorDTO> list(@RequestParam(defaultValue="0") int page,
                                      @RequestParam(defaultValue="10") int size){
     Page<AuthorDTO> p = service.list(page, size);

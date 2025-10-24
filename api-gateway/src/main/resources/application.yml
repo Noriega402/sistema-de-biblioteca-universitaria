@@ -31,7 +31,10 @@ spring:
               predicates:
                 - Path=/api/v1/authors/**
               filters:
-
+               
+logging:
+  level:
+    org.springframework.security: DEBUG
 
   security:
     oauth2:

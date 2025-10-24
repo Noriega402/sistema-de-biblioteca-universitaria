@@ -1,26 +1,25 @@
 package com.umg.gateway.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
@@ -28,7 +27,8 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeExchange(reg -> reg
+                .authorizeExchange(ex -> ex
+                .pathMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
                 .pathMatchers("/auth/**").permitAll()
                 .pathMatchers(HttpMethod.GET,
                         "/api/v1/libros", "/api/v1/libros/**",
@@ -47,20 +47,19 @@ public class SecurityConfig {
                         "/api/v1/authors", "/api/v1/authors/**")
                 .hasRole("ADMIN")
                 .anyExchange().authenticated()
-                ).oauth2ResourceServer(oauth -> oauth.jwt(jwt -> {
-                    
-            JwtGrantedAuthoritiesConverter granted = new JwtGrantedAuthoritiesConverter();
-            granted.setAuthoritiesClaimName("roles"); // <-- claim
-            granted.setAuthorityPrefix("ROLE_");      // <-- prefijo Spring
+                )
+                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> {
+            var granted = new JwtGrantedAuthoritiesConverter();
+            granted.setAuthoritiesClaimName("roles"); // claim del JWT
+            granted.setAuthorityPrefix("ROLE_");      // prefijo que espera hasRole
 
-            JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
+            var delegate = new JwtAuthenticationConverter();
             delegate.setJwtGrantedAuthoritiesConverter(granted);
 
-            ReactiveJwtAuthenticationConverterAdapter adapter
-                    = new ReactiveJwtAuthenticationConverterAdapter(delegate);
-
-            jwt.jwtAuthenticationConverter((Jwt token) -> adapter.convert(token));
-        })).build();
+            var adapter = new ReactiveJwtAuthenticationConverterAdapter(delegate);
+            jwt.jwtAuthenticationConverter(adapter);
+        }))
+                .build();
     }
 
     @Bean

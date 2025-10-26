@@ -55,12 +55,12 @@ public class AuthService {
         usuarios.save(user);
 
         var token = jwt.generateToken(user.getNick(), Map.of("roles", rol.getDescripcion()));
-        return new AuthResponse(token, rol.getDescripcion(), user.getNick());
+        return new AuthResponse(token, rol.getDescripcion(), user.getNick(), user.getEmail());
     }
 
     @Transactional
     public AuthResponse login(LoginRequest r) {
-        var user = usuarios.findByNick(r.nick())
+        var user = usuarios.findByEmail(r.email())
                 .orElseThrow(() -> new IllegalArgumentException("Credenciales inválidas"));
 
         if (!encoder.matches(r.password(), user.getPassword())) {
@@ -68,6 +68,6 @@ public class AuthService {
         }
 
         var token = jwt.generateToken(user.getNick(), Map.of("roles", user.getRol().getDescripcion()));
-        return new AuthResponse(token, user.getRol().getDescripcion(), user.getNick());
+        return new AuthResponse(token, user.getRol().getDescripcion(), user.getNick(), user.getEmail());
     }
 }

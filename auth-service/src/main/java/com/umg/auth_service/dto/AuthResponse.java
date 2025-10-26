@@ -6,6 +6,7 @@ package com.umg.auth_service.dto;
 public record AuthResponse(
         String token,
         String rol,
-        String nick
+        String nick,
+        String email
 ) {}
 

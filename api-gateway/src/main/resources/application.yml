@@ -4,34 +4,46 @@ server:
 spring:
   cloud:
     gateway:
-      server:
-        webflux:
-          default-filters:
-            - RemoveRequestHeader=Cookie
-            
-          routes:
-            - id: auth-service
-              uri: http://localhost:8081
-              predicates:
-                - Path=/auth/**
-              filters:
-                - RemoveRequestHeader=Authorization
-                #- StripPrefix=1
+      # Si quieres remover o añadir filtros globales, hazlo aquí.
+      # default-filters:
+      #   - RemoveRequestHeader=Cookie    # ❌ NO si vas a usar cookies HttpOnly
 
-            - id: catalog-service-books
-              uri: http://localhost:8082
-              predicates:
-                - Path=Path=/api/v1/libros, /api/v1/libros/**
-              filters:
-                #- StripPrefix=2
-                #- SetPath=/books
-                
-            - id: catalog-service-authors
-              uri: http://localhost:8082
-              predicates:
-                - Path=/api/v1/authors, /api/v1/authors/**
-              filters:
-               
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**               # Front llamará /auth/login y /auth/register
+          filters:
+            # Si quieres impedir que el Authorization del cliente pase al auth-service:
+            - RemoveRequestHeader=Authorization
+
+        - id: catalog-service-books
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/libros, /api/v1/libros/**
+
+        - id: catalog-service-authors
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/authors, /api/v1/authors/**
+
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins:
+              - "http://127.0.0.7:5500"   # <--- TU ORIGEN REAL (de la captura)
+              - "http://127.0.0.1:5500"
+              - "http://localhost:5173"
+              - "http://127.0.0.1:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
 logging:
   level:
     org.springframework.security: DEBUG
